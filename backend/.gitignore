@@ -1,0 +1,8 @@
+bin/
+obj/
+*.log
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.swp

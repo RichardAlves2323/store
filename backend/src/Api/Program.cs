@@ -16,7 +16,10 @@ builder.Services.AddScoped<IProductRepository, ProductRepositoryByDbContext>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IUserRepository, UserRepositoryByDbContext>();
 builder.Services.AddScoped<IUserService, UserService>();
-
+builder.Services.AddScoped<IStockRepository, StockRepositoryByDbContext>();
+builder.Services.AddScoped<IStockService, StockService>();
+builder.Services.AddScoped<IStockMovementRepository, StockMovementRepositoryByDbContext>();
+builder.Services.AddScoped<IStockMovementService, StockMovementService>();
 
 builder.Services.AddControllers();
 

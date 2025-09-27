@@ -15,6 +15,8 @@ namespace Infrastructure.Database
         
         public DbSet<Stock> Stocks { get; set; }
 
+        public DbSet<StockMovement> StockMovements { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -41,6 +43,20 @@ namespace Infrastructure.Database
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.ProductId).IsRequired();
                 entity.Property(e => e.Quantity).IsRequired();
+
+                entity.HasOne<Product>()
+                      .WithMany()
+                      .HasForeignKey(e => e.ProductId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<StockMovement>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.ProductId).IsRequired();
+                entity.Property(e => e.Type).IsRequired();
+                entity.Property(e => e.Quantity).IsRequired();
+                entity.Property(e => e.Date).IsRequired();
 
                 entity.HasOne<Product>()
                       .WithMany()

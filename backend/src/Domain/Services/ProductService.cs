@@ -1,8 +1,9 @@
 using Domain.Entities;
 using Domain.Interfaces.Repositories;
+using Domain.Interfaces.Services;
 
 namespace Domain.Services;
-public class ProductService
+public class ProductService : IProductService
 {
     private readonly IProductRepository _productRepository;
 
@@ -12,29 +13,33 @@ public class ProductService
         _productRepository = productRepository;
     }   
 
-    public async Task<Product> GetProductByIdAsync(int id)
+    
+    public Task<Product?> GetByIdAsync(int id)
     {
-        return await _productRepository.GetByIdAsync(id);
+        var product = _productRepository.GetByIdAsync(id);
+        return product;
     }
 
-    public async Task<IEnumerable<Product>> GetAllProductsAsync()
+    public Task<IEnumerable<Product>> GetAllAsync()
     {
-        return await _productRepository.GetAllAsync();
+        var products = _productRepository.GetAllAsync();
+        return products;
     }
 
-    public async Task AddProductAsync(Product product)
+    public Task<Product> AddAsync(Product product)
     {
-        await _productRepository.AddAsync(product);
+        var prod = _productRepository.AddAsync(product);
+        return prod;
     }
 
-    public async Task UpdateProductAsync(Product product)
+    public Task<Product> UpdateAsync(Product product)
     {
-        await _productRepository.UpdateAsync(product);
+        var prod = _productRepository.UpdateAsync(product);
+        return prod;
     }
 
-    public async Task DeleteProductAsync(int id)
+    public Task DeleteAsync(int id)
     {
-        await _productRepository.DeleteAsync(id);
+        return _productRepository.DeleteAsync(id);
     }
-
 }

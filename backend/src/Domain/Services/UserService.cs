@@ -13,12 +13,12 @@ public class UserService : IUserService
         _userRepository = userRepository;
     }
 
-    public async Task<User> GetByIdAsync(int id)
+    public async Task<User?> GetByIdAsync(int id)
     {
         return await _userRepository.GetByIdAsync(id);
     }
 
-    public async Task<User> GetByEmailAsync(string email)
+    public async Task<User?> GetByEmailAsync(string email)
     {
         return await _userRepository.GetByEmailAsync(email);
     }
@@ -26,7 +26,7 @@ public class UserService : IUserService
     public async Task<User> AddAsync(User user)
     {
         var existUser = await _userRepository.GetByEmailAsync(user.Email);
-        
+
         if (existUser != null)
         {
             throw new Exception("User with this email already exists.");

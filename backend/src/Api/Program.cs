@@ -20,6 +20,8 @@ builder.Services.AddScoped<IStockRepository, StockRepositoryByDbContext>();
 builder.Services.AddScoped<IStockService, StockService>();
 builder.Services.AddScoped<IStockMovementRepository, StockMovementRepositoryByDbContext>();
 builder.Services.AddScoped<IStockMovementService, StockMovementService>();
+builder.Services.AddScoped<IOrderRepository, OrderRepositoryByDbContext>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 builder.Services.AddControllers();
 

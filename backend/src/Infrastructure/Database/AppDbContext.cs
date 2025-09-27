@@ -12,6 +12,10 @@ namespace Infrastructure.Database
         
         public DbSet<Product> Products { get; set; }
         public DbSet<User> Users { get; set; }
+        
+        public DbSet<Stock> Stocks { get; set; }
+
+        public DbSet<StockMovement> StockMovements { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -25,13 +29,39 @@ namespace Infrastructure.Database
                 entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.Price).IsRequired().HasColumnType("decimal(18,2)");
             });
-            
+
             modelBuilder.Entity<User>(entity =>
             {
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Email).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.Password).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.Role).IsRequired().HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<Stock>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.ProductId).IsRequired();
+                entity.Property(e => e.Quantity).IsRequired();
+
+                entity.HasOne<Product>()
+                      .WithMany()
+                      .HasForeignKey(e => e.ProductId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<StockMovement>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.ProductId).IsRequired();
+                entity.Property(e => e.Type).IsRequired();
+                entity.Property(e => e.Quantity).IsRequired();
+                entity.Property(e => e.Date).IsRequired();
+
+                entity.HasOne<Product>()
+                      .WithMany()
+                      .HasForeignKey(e => e.ProductId)
+                      .OnDelete(DeleteBehavior.Cascade);
             });
 
 

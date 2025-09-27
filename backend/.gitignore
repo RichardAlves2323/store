@@ -6,3 +6,5 @@ obj/
 *.userosscache
 *.sln.docstates
 *.swp
+*.db
+*.db-*

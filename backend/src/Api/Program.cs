@@ -9,6 +9,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
 using System.Security.Claims;
+using Domain.Interfaces.HashPassword;
+using Infrastructure.HashPassword;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +40,7 @@ builder.Services.AddScoped<IStockMovementRepository, StockMovementRepositoryByDb
 builder.Services.AddScoped<IStockMovementService, StockMovementService>();
 builder.Services.AddScoped<IOrderRepository, OrderRepositoryByDbContext>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IHashPassword, HashPasswordByBcrypt>();
 
 var key = "minha-chave-secreta-super-segura-123!";
 

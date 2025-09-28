@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Domain.Entities;
+using Domain.Interfaces.HashPassword;
 using Domain.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -12,19 +13,23 @@ namespace Api.Controllers;
 [Route("api/[controller]")]
 public class LoginController : ControllerBase
 {
-    private readonly IUserService _userService;
 
     private readonly string _key = "minha-chave-secreta-super-segura-123!";
-    public LoginController(IUserService userService)
+    private readonly IUserService _userService;
+
+    private readonly IHashPassword _hashPassword;
+
+    public LoginController(IUserService userService, IHashPassword hashPassword)
     {
         _userService = userService;
+        _hashPassword = hashPassword;
     }
 
     [HttpPost]
     public async Task<IActionResult> Login([FromBody] LoginRequest login)
     {
         var user = await _userService.GetByEmailAsync(login.Email);
-        if (user == null || user.Password != login.Password)
+        if (user == null || !_hashPassword.Verify(login.Password, user.Password))
         {
             return Unauthorized(new { message = "Usuário ou senha inválidos" });
         }

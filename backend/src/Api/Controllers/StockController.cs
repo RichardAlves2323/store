@@ -1,5 +1,6 @@
 using Domain.Entities;
 using Domain.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -16,6 +17,7 @@ public class StockController : ControllerBase
     }
 
     [HttpGet("product/{productId}")]
+    [Authorize]
     public async Task<IActionResult> GetByProductId(int productId)
     {
         var stock = await _stockService.GetByProductIdAsync(productId);
@@ -27,6 +29,7 @@ public class StockController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create(Stock stock)
     {
         var createdStock = await _stockService.AddAsync(stock);
@@ -34,6 +37,7 @@ public class StockController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Update(int id, Stock stock)
     {
         if (id != stock.Id)

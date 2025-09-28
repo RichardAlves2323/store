@@ -1,5 +1,6 @@
 using Domain.Entities;
 using Domain.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -17,6 +18,7 @@ public class StockMovementController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> GetById(int id)
     {
         var stockMovement = await _stockMovementService.GetByIdAsync(id);
@@ -28,6 +30,7 @@ public class StockMovementController : ControllerBase
     }
 
     [HttpGet("product/{productId}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> GetByProductId(int productId)
     {
         var stockMovements = await _stockMovementService.GetByProductIdAsync(productId);
@@ -35,6 +38,7 @@ public class StockMovementController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create(StockMovement stockMovement)
     {
         try

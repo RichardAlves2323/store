@@ -1,4 +1,5 @@
 using Domain.Entities;
+using Domain.Interfaces.HashPassword;
 using Domain.Interfaces.Repositories;
 using Domain.Interfaces.Services;
 
@@ -8,10 +9,13 @@ public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
 
-    public UserService(IUserRepository userRepository)
+    private readonly IHashPassword _hashPassword;
+
+    public UserService(IUserRepository userRepository, IHashPassword hashPassword)
     {
         _userRepository = userRepository;
-    }
+        _hashPassword = hashPassword;
+    }   
 
     public async Task<User?> GetByIdAsync(int id)
     {
@@ -31,6 +35,8 @@ public class UserService : IUserService
         {
             throw new Exception("User with this email already exists.");
         }
+
+        user.Password = _hashPassword.Hash(user.Password);
 
         return await _userRepository.AddAsync(user);
     }

@@ -1,6 +1,7 @@
 using Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 using Domain.Entities;
+using BCrypt.Net;
 
 public static class SeedData
 {
@@ -13,7 +14,7 @@ public static class SeedData
 
         if (!await context.Users.AnyAsync(u => u.Role.ToString() == "Admin"))
         {
-            var adminUser = new User(email: "admin@gmail.com", password: "admin123", role: UserRole.Admin);
+            var adminUser = new User(email: "admin@gmail.com", password: BCrypt.Net.BCrypt.HashPassword("admin123"), role: UserRole.Admin);
             context.Users.Add(adminUser);
             await context.SaveChangesAsync();
 

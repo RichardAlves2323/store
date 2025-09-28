@@ -14,6 +14,17 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy
+            .AllowAnyOrigin()
+            .AllowAnyHeader()                     
+            .AllowAnyMethod();                    
+    });
+});
+
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite($"Data Source= Store.db"));
 
@@ -84,6 +95,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+app.UseCors("AllowFrontend");
 
 app.UseAuthentication();
 app.UseAuthorization();

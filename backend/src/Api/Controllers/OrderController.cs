@@ -1,5 +1,6 @@
 using Domain.Entities;
 using Domain.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -15,17 +16,19 @@ public class OrderController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [Authorize]
     public async Task<IActionResult> GetById(int id)
     {
         var order = await _orderService.GetByIdAsync(id);
         if (order == null)
-        {           
+        {
             return NotFound();
         }
         return Ok(order);
     }
 
     [HttpGet("user/{userId}")]
+    [Authorize]
     public async Task<IActionResult> GetByUserId(int userId)
     {
         var orders = await _orderService.GetByUserIdAsync(userId);
@@ -33,6 +36,7 @@ public class OrderController : ControllerBase
     }
 
     [HttpGet("product/{productId}")]
+    [Authorize]
     public async Task<IActionResult> GetByProductId(int productId)
     {
         var orders = await _orderService.GetByProductIdAsync(productId);
@@ -40,9 +44,10 @@ public class OrderController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<IActionResult> Create(Order order)
     {
-        try     
+        try
         {
             var createdOrder = await _orderService.AddAsync(order);
             return CreatedAtAction(nameof(GetById), new { id = createdOrder.Id }, createdOrder);

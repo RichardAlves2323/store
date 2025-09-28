@@ -1,5 +1,6 @@
 using Domain.Entities;
 using Domain.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -15,6 +16,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [Authorize]
     public async Task<IActionResult> GetById(int id)
     {
         var user = await _userService.GetByIdAsync(id);
@@ -26,6 +28,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("email/{email}")]
+    [Authorize]
     public async Task<IActionResult> GetByEmail(string email)
     {
         var user = await _userService.GetByEmailAsync(email);

@@ -46,7 +46,7 @@ namespace Infrastructure.Database
                 entity.Property(e => e.ProductId).IsRequired();
                 entity.Property(e => e.Quantity).IsRequired();
 
-                entity.HasOne<Product>()
+                entity.HasOne(s => s.Product)
                       .WithMany()
                       .HasForeignKey(e => e.ProductId)
                       .OnDelete(DeleteBehavior.Cascade);

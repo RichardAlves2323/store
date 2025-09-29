@@ -3,6 +3,12 @@ import api from "../services/api";
 import { getUserFromToken } from "../services/getUserFromToken";
 import { useNavigate } from "react-router-dom";
 
+type Stock = {
+  id: number;
+  productId: number;
+  quantity: number;
+  product: Product;
+}
 type Product = {
   id: number;
   name: string;
@@ -11,17 +17,15 @@ type Product = {
 };
 
 const AdminPage: React.FC = () => {
-  const [products, setProducts] = useState<Product[]>([
-    { id: 1, name: "Notebook", price: 3500, description: "Notebook de alto desempenho" },
-    { id: 2, name: "Mouse Gamer", price: 150, description: "Mouse com alta precisão" },
-  ]);
+
+  const [productWithStock, setProductWithStock] = useState<Stock[]>([]);
 
   const [newName, setNewName] = useState("");
   const [newPrice, setNewPrice] = useState<number | "">("");
   const [newDesc, setNewDesc] = useState("");
 
   const [selectedProductId, setSelectedProductId] = useState<number | "">("");
-  const [movementType, setMovementType] = useState<0 | 1>(0); // 0 = Entrada, 1 = Saída
+  const [movementType, setMovementType] = useState<0 | 1>(0);
   const [quantity, setQuantity] = useState<number>(0);
 
  
@@ -40,8 +44,9 @@ const AdminPage: React.FC = () => {
 
   const getProducts = async () => {
     try {
-      const response = await api.get("/Product");
-      setProducts(response.data);
+      const productWithStock = await api.get("/Stock");
+      setProductWithStock(productWithStock.data);
+
     } catch (error) {
       console.error("Erro ao buscar produtos:", error);
     }
@@ -53,8 +58,7 @@ const AdminPage: React.FC = () => {
       alert("Preencha todos os campos do novo produto");
       return;
     }
-
-    const nextId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
+    const nextId = productWithStock.length > 0 ? Math.max(...productWithStock.map(p => p.product.id)) + 1 : 1;
     const newProduct: Product = {
       id: nextId,
       name: newName,
@@ -67,7 +71,7 @@ const AdminPage: React.FC = () => {
 
       const createdProduct = response.data as Product;
       console.log("Produto cadastrado:", createdProduct);
-      setProducts([...products, createdProduct]);
+      getProducts();
       setNewName("");
       setNewPrice("");
       setNewDesc("");
@@ -78,6 +82,22 @@ const AdminPage: React.FC = () => {
       console.error("Erro ao cadastrar produto:", error);
     }
 
+    
+  };
+
+  const handleDeleteProduct = async (productId: number) => {
+    if (!window.confirm("Tem certeza que deseja deletar este produto?")) {
+      return;
+    }
+
+    try {
+      await api.delete(`/Product/${productId}`);
+      alert("Produto deletado!");
+      getProducts();
+    } catch (error) {
+      alert("Erro ao deletar produto");
+      console.error("Erro ao deletar produto:", error);
+    }
     
   };
 
@@ -96,6 +116,7 @@ const AdminPage: React.FC = () => {
       });
 
       alert("Movimentação registrada!");
+      getProducts();
       setSelectedProductId("");
       setMovementType(0);
       setQuantity(0);
@@ -195,9 +216,9 @@ const AdminPage: React.FC = () => {
               className="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-400"
             >
               <option value="">Selecione um produto</option>
-              {products.map((product) => (
-                <option key={product.id} value={product.id}>
-                  {product.name}
+              {productWithStock.map((stock) => (
+                <option key={stock.product.id} value={stock.product.id}>
+                  {stock.product.name}
                 </option>
               ))}
             </select>
@@ -281,16 +302,22 @@ const AdminPage: React.FC = () => {
                 <th className="px-4 py-2 border">ID</th>
                 <th className="px-4 py-2 border">Nome</th>
                 <th className="px-4 py-2 border">Preço (R$)</th>
+                <th className="px-4 py-2 border">Estoque</th>
                 <th className="px-4 py-2 border">Descrição</th>
               </tr>
             </thead>
             <tbody>
-              {products.map((product) => (
-                <tr key={product.id} className="hover:bg-gray-100">
-                  <td className="px-4 py-2 border">{product.id}</td>
-                  <td className="px-4 py-2 border">{product.name}</td>
-                  <td className="px-4 py-2 border">{product.price.toFixed(2)}</td>
-                  <td className="px-4 py-2 border">{product.description}</td>
+              {productWithStock.map((stock) => (
+                <tr key={stock.product.id} className="hover:bg-gray-100">
+                  <td className="px-4 py-2 border">{stock.product.id}</td>
+                  <td className="px-4 py-2 border">{stock.product.name}</td>
+                  <td className="px-4 py-2 border">{stock.product.price.toFixed(2)}</td>
+                  <td className="px-4 py-2 border">{stock.quantity}</td>
+                  <td className="px-4 py-2 border">{stock.product.description}</td>
+                  <td className="px-4 py-2 border"><button onClick={() => handleDeleteProduct(stock.product.id)}
+                  className="w-full bg-red-600 text-white font-semibold py-2 rounded hover:bg-red-700 transition">
+                    Deletar
+                  </button></td>
                 </tr>
               ))}
             </tbody>

@@ -27,4 +27,10 @@ public class StockService : IStockService
     {
         return await _stockRepository.UpdateAsync(stock);
     }
+
+    public Task<IEnumerable<Stock>> GetAllAsync()
+    {
+        var stocks = _stockRepository.GetAllAsync();
+        return stocks;
+    }
 }

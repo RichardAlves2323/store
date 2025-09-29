@@ -28,6 +28,14 @@ public class StockController : ControllerBase
         return Ok(stock);
     }
 
+    [HttpGet]
+    [Authorize]
+    public async Task<IActionResult> GetAll()
+    {
+        var stocks = await _stockService.GetAllAsync();
+        return Ok(stocks);
+    }
+
     [HttpPost]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create(Stock stock)

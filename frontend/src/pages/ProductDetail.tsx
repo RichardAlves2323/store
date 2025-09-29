@@ -98,7 +98,7 @@ const ProductDetail: React.FC = () => {
           className="self-start mb-4 text-blue-500 hover:underline"
           onClick={() => navigate(-1)}
         >
-          ← Voltar
+          Voltar
         </button>
 
         <img

@@ -60,7 +60,7 @@ Existe um botão **Criar Conta** caso o usuário ainda não esteja cadastrado.
 
 Para acessar a pagina acesse: **http://localhost:5173/login**
 
-![alt text](image.png)
+![alt text](img/image.png)
 
 ---
 
@@ -70,7 +70,7 @@ Nessa página, o usuário poderá se cadastrar no sistema informando apenas **e-
 
 Para acessar a pagina acesse: **http://localhost:5173/register**
 
-![alt text](image-1.png)
+![alt text](img/image-1.png)
 
 ---
 
@@ -90,9 +90,9 @@ A página de administrador pode ser acessada através da URL: **[http://localhos
 - **Cadastro de Usuários Administradores:** Informe e-mail e senha para criar novos administradores.  
 - **Consulta e Exclusão de Produtos:** É possível visualizar todos os produtos cadastrados e deletá-los, se necessário.
 
-![alt text](image-2.png)
+![alt text](img/image-2.png)
 
-![alt text](image-3.png)
+![alt text](img/image-3.png)
 ---
 
 ### Página de Listagem de Produtos
@@ -104,7 +104,7 @@ Nessa página, todos os produtos cadastrados no sistema são listados, mostrando
 - Imagem genérica para representar o produto 
 
 
-![alt text](image-4.png)
+![alt text](img/image-4.png)
 
 ---
 
@@ -119,4 +119,4 @@ Nessa página, é possível visualizar as informações detalhadas de um produto
 
 Além disso, há um botão para realizar a compra do produto.
 
-![alt text](image-5.png)
+![alt text](img/image-5.png)

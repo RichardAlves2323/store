@@ -1,22 +1,30 @@
 import React, { useState } from "react";
+import api from "../services/api";
+import { useNavigate } from "react-router-dom";
 
 const CustomerRegister: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
       alert("Preencha todos os campos");
       return;
     }
 
-    // Aqui você chamaria a API do backend para criar o cliente
-    console.log({ email, password });
+    try {
+    await api.post("/User", { email, password, role: 1 });
     alert(`Cliente cadastrado: ${email}`);
-
-    setEmail("");
-    setPassword("");
+    navigate("/login");
+    
+    } catch (error) {
+      alert("Erro ao cadastrar cliente");
+      console.error("Erro ao cadastrar cliente:", error);
+      return;
+    }
+    
   };
 
   return (
@@ -49,7 +57,7 @@ const CustomerRegister: React.FC = () => {
 
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white font-semibold py-2 rounded hover:bg-green-700 transition"
+            className="w-full bg-blue-600 text-white font-semibold py-2 rounded hover:bg-blue-700 transition"
           >
             Cadastrar
           </button>

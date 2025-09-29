@@ -1,14 +1,37 @@
-import React from "react";
+import React, { useEffect } from "react";
 import type { Product } from "./ProductCard";
 import ProductCard from "./ProductCard";
-
-const products: Product[] = [
-  { id: 1, name: "Camiseta", price: 49.99, description: "Camiseta confortável", stock: 10 },
-  { id: 2, name: "Tênis", price: 199.99, description: "Tênis esportivo", stock: 5 },
-  { id: 3, name: "Relógio", price: 299.99, description: "Relógio elegante", stock: 2 },
-];
+import api from "../services/api";
+import { useNavigate } from "react-router-dom";
 
 const ProductList: React.FC = () => {
+
+  const [products, setProducts] = React.useState<Product[]>([]);
+  const navigate = useNavigate();
+
+  const checkAuthentication = () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/401");
+    }
+  }
+
+  const getProducts = async () => {
+    try {
+      const response = await api.get("/Product");
+      setProducts(response.data);
+    } catch (error) {
+      alert("Erro ao buscar produtos");
+      console.error("Erro ao buscar produtos:", error);
+    }
+  }
+
+  useEffect(() => {
+    checkAuthentication();  
+    getProducts();
+   }, []);
+
+
   return (
     <div className="min-h-screen w-screen bg-gray-100 p-8">
       <h1 className="text-3xl font-bold mb-8 text-center">Produtos</h1>
@@ -22,4 +45,3 @@ const ProductList: React.FC = () => {
 };
 
 export default ProductList;
-export { products };

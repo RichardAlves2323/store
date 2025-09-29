@@ -6,7 +6,7 @@ export interface Product {
   name: string;
   price: number;
   description: string;
-  stock: number;
+  stock?: number;
   imageUrl?: string;
 }
 
@@ -29,7 +29,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       />
       <div className="p-4">
         <h3 className="text-lg font-semibold">{product.name}</h3>
-        <p className="text-gray-600 mt-2">${product.price.toFixed(2)}</p>
+        <p className="text-gray-600 mt-2">R${product.price.toFixed(2)}</p>
       </div>
     </div>
   );

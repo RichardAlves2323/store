@@ -6,6 +6,7 @@ const api = axios.create({
 });
 
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 api.interceptors.request.use((config: any) => {
   const token = localStorage.getItem("token");
   if (token && config.headers) {

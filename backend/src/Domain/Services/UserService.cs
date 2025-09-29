@@ -19,12 +19,24 @@ public class UserService : IUserService
 
     public async Task<User?> GetByIdAsync(int id)
     {
-        return await _userRepository.GetByIdAsync(id);
+        var user = await _userRepository.GetByIdAsync(id);
+        if (user != null)
+        {
+            var userWithoutPassword = new User(id: user.Id, email: user.Email);
+            return userWithoutPassword;
+        }
+        return user;
     }
 
     public async Task<User?> GetByEmailAsync(string email)
     {
-        return await _userRepository.GetByEmailAsync(email);
+        var user = await _userRepository.GetByEmailAsync(email);
+        if (user != null)
+        {
+            var userWithoutPassword = new User(id: user.Id, email: user.Email);
+            return userWithoutPassword;
+        }
+        return user;
     }
 
     public async Task<User> AddAsync(User user)
@@ -38,6 +50,10 @@ public class UserService : IUserService
 
         user.Password = _hashPassword.Hash(user.Password);
 
-        return await _userRepository.AddAsync(user);
+        var createdUser = await _userRepository.AddAsync(user);
+
+        var userWithoutPassword = new User(id: createdUser.Id, email: createdUser.Email);
+
+        return userWithoutPassword;
     }
 }

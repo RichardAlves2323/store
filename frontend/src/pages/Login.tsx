@@ -20,7 +20,6 @@ const Login = () => {
     try {
       setError("");
       const response = await api.post("/login", { email, password });
-      console.log(response.data);
 
       const token = response.data.token;
       localStorage.setItem("token", token);

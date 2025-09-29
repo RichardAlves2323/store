@@ -16,6 +16,12 @@ public class User
 
     public User() { }
 
+    public User(int id, string email)
+    {
+        Id = id;
+        Email = email;
+    }
+
     public User(string email, string password, UserRole role = UserRole.Client)
     {
 

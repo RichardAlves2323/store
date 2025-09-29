@@ -1,11 +1,56 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { products } from "./ProductList";
+import type { Product } from "./ProductCard";
+import api from "../services/api";
+import { getUserFromToken } from "../services/getUserFromToken";
+
+
+interface Stock {
+  productId: number;
+  quantity: number;
+}
+
+interface Order {
+  productId: number;
+  quantity: number;
+  userId: string;
+  orderDate: Date;
+  totalAmount: number;
+}
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const product = products.find((p) => p.id === Number(id));
+  const [product, setProduct] = useState<Product | null>(null);
+  const [stock, setStock] = useState<Stock | null>(null);
+
+  const checkAuthentication = () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/401");
+    }
+  }
+
+  const getProductByIdAndStock = async () => {
+
+    try {
+      const response = await api.get(`/Product/${id}`);
+      setProduct(response.data);
+
+      const stockResponse = await api.get<Stock>(`/Stock/product/${id}`);
+      setStock(stockResponse.data);
+    } catch (error) {
+      alert("Erro ao buscar produto");
+      console.error("Erro ao buscar produto:", error);
+    }
+    
+  };
+  
+  useEffect(() => { 
+    checkAuthentication(); 
+    getProductByIdAndStock();
+   }, [id]);
+
 
   const [quantity, setQuantity] = useState(1);
 
@@ -13,8 +58,37 @@ const ProductDetail: React.FC = () => {
     return <div className="p-8 text-center">Produto não encontrado</div>;
   }
 
-  const handleBuy = () => {
-    alert(`Você comprou ${quantity} unidade(s) de ${product.name}!`);
+  const handleBuy = async () => {
+
+    try {
+      const user = getUserFromToken();
+      if (!user) {
+        alert("Usuário não autenticado");
+        return;
+      }
+  
+      if (!stock || quantity > stock.quantity) {
+        alert("Quantidade indisponível em estoque");
+        return;
+      }
+  
+      const order: Order = {
+        productId: product.id,
+        quantity,
+        userId: user.unique_name,
+        orderDate: new Date(),
+        totalAmount: product.price * quantity,
+      };
+  
+      api.post("/Order", order);
+  
+      alert("Compra realizada com sucesso!");
+      navigate("/");
+    } catch (error) {
+      alert("Erro ao processar compra");
+      console.error("Erro ao processar compra:", error);
+    }
+    
   };
 
   return (
@@ -38,13 +112,13 @@ const ProductDetail: React.FC = () => {
         <p className="text-lg font-semibold mt-4 text-center">
           Preço: ${product.price.toFixed(2)}
         </p>
-        <p className="text-gray-500 mt-1 text-center">Estoque disponível: {product.stock}</p>
+        <p className="text-gray-500 mt-1 text-center">Estoque disponível: {stock?.quantity}</p>
 
         <div className="mt-4 flex items-center gap-4">
           <input
             type="number"
             min={1}
-            max={product.stock}
+            max={stock ? stock.quantity : 1}
             value={quantity}
             onChange={(e) => setQuantity(Math.max(1, Number(e.target.value)))}
             className="border px-3 py-2 rounded-lg w-20 text-center"

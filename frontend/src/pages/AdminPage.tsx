@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import api from "../services/api";
+import { getUserFromToken } from "../services/getUserFromToken";
+import { useNavigate } from "react-router-dom";
 
 type Product = {
   id: number;
@@ -9,7 +11,6 @@ type Product = {
 };
 
 const AdminPage: React.FC = () => {
-  // -------- Produtos --------
   const [products, setProducts] = useState<Product[]>([
     { id: 1, name: "Notebook", price: 3500, description: "Notebook de alto desempenho" },
     { id: 2, name: "Mouse Gamer", price: 150, description: "Mouse com alta precisão" },
@@ -19,15 +20,23 @@ const AdminPage: React.FC = () => {
   const [newPrice, setNewPrice] = useState<number | "">("");
   const [newDesc, setNewDesc] = useState("");
 
-  // -------- Estoque --------
   const [selectedProductId, setSelectedProductId] = useState<number | "">("");
   const [movementType, setMovementType] = useState<0 | 1>(0); // 0 = Entrada, 1 = Saída
   const [quantity, setQuantity] = useState<number>(0);
 
-  // -------- Usuário Admin --------
+ 
   const [adminEmail, setAdminEmail] = useState("");
   const [adminPassword, setAdminPassword] = useState("");
 
+  const navigate = useNavigate();
+
+
+  const checkAuthentication = () => { 
+    const token = getUserFromToken();
+    if (!token || token.role !== "Admin") {
+      navigate("/403");
+    }
+  }
 
   const getProducts = async () => {
     try {
@@ -37,7 +46,7 @@ const AdminPage: React.FC = () => {
       console.error("Erro ao buscar produtos:", error);
     }
   }
-  // Cadastrar produto
+
   const handleAddProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newName || newPrice === "" || !newDesc) {
@@ -72,7 +81,6 @@ const AdminPage: React.FC = () => {
     
   };
 
-  // Movimentar estoque
   const handleStockMovement = async (e: React.FormEvent) => {
     e.preventDefault();
     if (selectedProductId === "" || quantity <= 0) {
@@ -122,12 +130,13 @@ const AdminPage: React.FC = () => {
   };
 
   useEffect(() => {
+    checkAuthentication();
     getProducts();
    }, []);
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center p-6 space-y-8">
-      {/* Cadastro de novo produto */}
+      
       <div className="w-full max-w-2xl bg-white rounded-xl shadow p-6">
         <h1 className="text-2xl font-bold mb-6 text-center">Cadastrar Novo Produto</h1>
 
@@ -173,7 +182,7 @@ const AdminPage: React.FC = () => {
         </form>
       </div>
 
-      {/* Movimentação de estoque */}
+      
       <div className="w-full max-w-2xl bg-white rounded-xl shadow p-6">
         <h1 className="text-2xl font-bold mb-6 text-center">Gerenciar Estoque</h1>
 
@@ -226,7 +235,7 @@ const AdminPage: React.FC = () => {
         </form>
       </div>
 
-      {/* Criar Usuário Administrador */}
+      
       <div className="w-full max-w-2xl bg-white rounded-xl shadow p-6">
         <h1 className="text-2xl font-bold mb-6 text-center">Criar Usuário Administrador</h1>
 
@@ -262,7 +271,7 @@ const AdminPage: React.FC = () => {
         </form>
       </div>
 
-      {/* Tabela de produtos cadastrados */}
+      
       <div className="w-full max-w-4xl bg-white rounded-xl shadow p-6">
         <h2 className="text-2xl font-bold mb-4 text-center">Produtos Cadastrados</h2>
         <div className="overflow-x-auto">

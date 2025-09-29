@@ -31,4 +31,16 @@ public class StockRepositoryByDbContext : IStockRepository
         await _context.SaveChangesAsync();
         return stock;
     }
+
+    public Task<IEnumerable<Stock>> GetAllAsync()
+    {
+        var stocks = _context.Stocks.Include(s => s.Product).AsEnumerable();
+
+        Console.WriteLine("Retrieved stocks from database:");
+        foreach (var stock in stocks)
+        {
+            Console.WriteLine($"Stock ID: {stock.Id}, Product ID: {stock.Product}, Quantity: {stock.Quantity}");
+        }   
+        return Task.FromResult(stocks);
+    }
 }

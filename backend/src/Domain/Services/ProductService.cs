@@ -7,10 +7,13 @@ public class ProductService : IProductService
 {
     private readonly IProductRepository _productRepository;
 
+    private readonly IStockService _stockService;
 
-    public ProductService(IProductRepository productRepository)
+
+    public ProductService(IProductRepository productRepository, IStockService stockService)
     {
         _productRepository = productRepository;
+        _stockService = stockService;
     }   
 
     
@@ -26,15 +29,18 @@ public class ProductService : IProductService
         return products;
     }
 
-    public Task<Product> AddAsync(Product product)
+    public async Task<Product> AddAsync(Product product)
     {
-        var prod = _productRepository.AddAsync(product);
+        var prod = await _productRepository.AddAsync(product);
+
+        await _stockService.AddAsync(new Stock(prod.Id, 0));
+
         return prod;
     }
 
-    public Task<Product> UpdateAsync(Product product)
+    public async Task<Product> UpdateAsync(Product product)
     {
-        var prod = _productRepository.UpdateAsync(product);
+        var prod = await _productRepository.UpdateAsync(product);
         return prod;
     }
 

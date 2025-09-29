@@ -20,22 +20,13 @@ public class UserService : IUserService
     public async Task<User?> GetByIdAsync(int id)
     {
         var user = await _userRepository.GetByIdAsync(id);
-        if (user != null)
-        {
-            var userWithoutPassword = new User(id: user.Id, email: user.Email);
-            return userWithoutPassword;
-        }
+    
         return user;
     }
 
     public async Task<User?> GetByEmailAsync(string email)
     {
         var user = await _userRepository.GetByEmailAsync(email);
-        if (user != null)
-        {
-            var userWithoutPassword = new User(id: user.Id, email: user.Email);
-            return userWithoutPassword;
-        }
         return user;
     }
 

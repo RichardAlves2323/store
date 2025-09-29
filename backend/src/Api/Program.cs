@@ -42,7 +42,13 @@ builder.Services.AddScoped<IOrderRepository, OrderRepositoryByDbContext>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IHashPassword, HashPasswordByBcrypt>();
 
-var key = "minha-chave-secreta-super-segura-123!";
+builder.Services.Configure<JwtOptions>(
+    builder.Configuration.GetSection("Jwt"));
+
+var config = builder.Configuration;
+
+string key = config["Jwt:Key"] ?? "";
+
 
 builder.Services.AddAuthentication(options =>
 {

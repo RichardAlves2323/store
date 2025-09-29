@@ -5,6 +5,7 @@ using Domain.Entities;
 using Domain.Interfaces.HashPassword;
 using Domain.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Api.Controllers;
@@ -14,15 +15,18 @@ namespace Api.Controllers;
 public class LoginController : ControllerBase
 {
 
-    private readonly string _key = "minha-chave-secreta-super-segura-123!";
+    private readonly JwtOptions _jwtOptions;
+
     private readonly IUserService _userService;
 
     private readonly IHashPassword _hashPassword;
 
-    public LoginController(IUserService userService, IHashPassword hashPassword)
+    public LoginController(IOptions<JwtOptions> jwtOptions, IUserService userService, IHashPassword hashPassword)
     {
         _userService = userService;
         _hashPassword = hashPassword;
+        _jwtOptions = jwtOptions.Value;
+        
     }
 
     [HttpPost]
@@ -35,7 +39,7 @@ public class LoginController : ControllerBase
         }
 
         var token = new JwtSecurityTokenHandler();
-        var key = Encoding.UTF8.GetBytes(_key);
+        var key = Encoding.UTF8.GetBytes(_jwtOptions.Key);
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(new[]
